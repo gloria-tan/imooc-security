@@ -1,19 +1,20 @@
+
 ### GET Test
-GET http://localhost:8080/api/greeting HTTP/1.1
-Authorization: Basic user f56737e5-7dbf-44f9-8d4b-5266fa6197eb
+GET http://{{host}}/api/greeting HTTP/1.1
+Authorization: Basic user {{password}}
 Accept: application/json
 
 ### POST Test
-POST http://localhost:8080/api/greeting?name=billwen
-Authorization: Basic user f3e22166-da9b-4af3-8342-7b244c01d5e3
+POST http://{{host}}/api/greeting?name=billwen
+Authorization: Basic user {{password}}
 
 ### PUT Test
-PUT http://localhost:8080/api/greeting/gang.wen
-Authorization: Basic user 1da5f891-0bc3-4c41-84df-005918080949
+PUT http://{{host}}/api/greeting/gang.wen
+Authorization: Basic user {{password}}
 
 ### Json payload
-POST http://localhost:8080/api/jsonpayload
-Authorization: Basic user 54384eef-ca6f-434f-b210-4c2d0151ccf0
+POST http://{{host}}/api/jsonpayload
+Authorization: Basic user {{password}}
 Content-Type: application/json
 
 {

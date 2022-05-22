@@ -1,6 +1,7 @@
 package com.billwen.learning.imooc.imoocsecurity.rest;
 
 import lombok.Data;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -13,6 +14,7 @@ public class UserResource {
     }
 
     @PostMapping("/greeting")
+    @ResponseStatus(HttpStatus.CREATED)
     public String makeGreeting(@RequestParam String name) {
         return "Hello world " + name;
     }
