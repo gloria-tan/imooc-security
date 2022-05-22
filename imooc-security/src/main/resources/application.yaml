@@ -26,3 +26,8 @@ server:
 spring:
   application:
     name: uaa
+  security:
+    user:
+      name: user
+      password: 12345678
+      roles: USER,ADMIN
