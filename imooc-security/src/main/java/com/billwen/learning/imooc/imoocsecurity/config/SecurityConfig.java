@@ -16,5 +16,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.formLogin(Customizer.withDefaults());
 
+        http.httpBasic(Customizer.withDefaults());
+
+        http.csrf()
+                .disable();
+
     }
 }
