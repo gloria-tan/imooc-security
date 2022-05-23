@@ -23,8 +23,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
         http.formLogin()
-            .loginPage("/login")
-            .permitAll();
+                .successHandler(new RestAuthenticationSuccessHandler())
+                .failureHandler(new RestAuthenticationFailureHandler())
+                .loginPage("/login")
+                .permitAll();
 
         http.httpBasic(Customizer.withDefaults());
 
@@ -37,9 +39,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .rememberMeCookieDomain("somethingToRemember");
 
         http.logout()
+                .logoutSuccessHandler(new RestLogoutSuccessHandler())
                 .invalidateHttpSession(true)
                 .deleteCookies();
-
+        
     }
 
     @Override
