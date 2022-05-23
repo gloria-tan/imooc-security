@@ -1,5 +1,6 @@
 package com.billwen.learning.imooc.imoocsecurity.config;
 
+import com.billwen.learning.imooc.imoocsecurity.security.filter.RestAuthenticationFilter;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.Customizer;
@@ -10,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @EnableWebSecurity(debug = true)
@@ -18,8 +20,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .anyRequest()
-                .authenticated();
+                .mvcMatchers("/authorize/login").permitAll()
+                .mvcMatchers("/admin/**").hasRole("ADMIN")
+                .mvcMatchers("/api/**").hasRole("USER")
+                .anyRequest().authenticated();
 
 
         http.formLogin()
@@ -32,7 +36,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.csrf()
                 .csrfTokenRepository(new CookieCsrfTokenRepository())
-                .ignoringAntMatchers("/api/**");
+                .ignoringAntMatchers("/api/**", "/authorize/**");
 
         http.rememberMe()
             .tokenValiditySeconds(30 * 24 * 3600)
@@ -42,7 +46,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutSuccessHandler(new RestLogoutSuccessHandler())
                 .invalidateHttpSession(true)
                 .deleteCookies();
-        
+
+        http.addFilterBefore(restAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 
     @Override
@@ -63,5 +68,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    private RestAuthenticationFilter restAuthenticationFilter() throws Exception {
+        RestAuthenticationFilter filter = new RestAuthenticationFilter();
+        filter.setAuthenticationSuccessHandler(new RestAuthenticationSuccessHandler());
+        filter.setAuthenticationFailureHandler(new RestAuthenticationFailureHandler());
+        filter.setAuthenticationManager(authenticationManager());
+        filter.setFilterProcessesUrl("/authorize/login");
+
+        return filter;
     }
 }

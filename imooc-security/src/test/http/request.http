@@ -20,3 +20,21 @@ Content-Type: application/json
 {
 "name": "superman"
 }
+
+### customerized filter
+POST http://{{host}}/authorize/login
+Content-Type: application/json
+
+{
+  "username": "user",
+  "password": "12345678"
+}
+
+### customerized filter failed
+POST http://{{host}}/authorize/login
+Content-Type: application/json
+
+{
+  "username": "user",
+  "password": "1234567"
+}
