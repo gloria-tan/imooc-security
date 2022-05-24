@@ -1,12 +1,15 @@
 package com.billwen.learning.imooc.imoocsecurity.domain.dto;
 
+import com.billwen.learning.imooc.imoocsecurity.annotation.PasswordMatch;
 import com.billwen.learning.imooc.imoocsecurity.annotation.ValidEmail;
+import com.billwen.learning.imooc.imoocsecurity.annotation.ValidPassword;
 import lombok.Data;
 
 import javax.validation.constraints.*;
 import java.io.Serializable;
 
 @Data
+@PasswordMatch
 public class UserDto implements Serializable {
 
     @NotEmpty
@@ -14,9 +17,10 @@ public class UserDto implements Serializable {
     private String username;
 
     @NotEmpty
-    @Size(min = 8, max = 20, message = "密码长度必须在4-20个字符之间")
+    @ValidPassword
     private String password;
 
+    @NotEmpty
     private String matchPassword;
 
     @NotEmpty

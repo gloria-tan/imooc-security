@@ -48,6 +48,6 @@ Content-Type: application/json
   "password": "12345678",
   "matchPassword": "12345678",
   "name": "Zhangsan",
-  "email": "gang.wen@gmail.com"
+  "email": "gang.wen@gmail"
 
 }
