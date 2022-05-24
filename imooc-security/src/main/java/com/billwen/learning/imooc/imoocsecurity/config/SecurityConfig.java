@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -24,6 +25,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @EnableWebSecurity(debug = true)
 @Import(SecurityProblemSupport.class)
+@Order(99)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final SecurityProblemSupport securityProblemSupport;
@@ -36,22 +38,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .mvcMatchers("/api/**").hasRole("USER")
                 .anyRequest().authenticated();
 
-
-        http.formLogin()
-                .successHandler(new RestAuthenticationSuccessHandler())
-                .failureHandler(new RestAuthenticationFailureHandler())
-                .loginPage("/login")
-                .permitAll();
-
         http.httpBasic(Customizer.withDefaults());
 
         http.csrf()
                 .csrfTokenRepository(new CookieCsrfTokenRepository())
                 .ignoringAntMatchers("/api/**", "/authorize/**");
 
-        http.rememberMe()
-            .tokenValiditySeconds(30 * 24 * 3600)
-            .rememberMeCookieDomain("somethingToRemember");
+
 
         http.logout()
                 .logoutSuccessHandler(new RestLogoutSuccessHandler())
