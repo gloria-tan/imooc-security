@@ -1,8 +1,10 @@
 package com.billwen.learning.imooc.imoocsecurity.config;
 
 import com.billwen.learning.imooc.imoocsecurity.security.filter.RestAuthenticationFilter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -15,11 +17,16 @@ import org.springframework.security.crypto.password.MessageDigestPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.zalando.problem.spring.web.advice.security.SecurityProblemSupport;
 
 import java.util.Map;
 
+@RequiredArgsConstructor
 @EnableWebSecurity(debug = true)
+@Import(SecurityProblemSupport.class)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    private final SecurityProblemSupport securityProblemSupport;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -52,6 +59,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .deleteCookies();
 
         http.addFilterBefore(restAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+
+        http.exceptionHandling()
+                .authenticationEntryPoint(securityProblemSupport)
+                .accessDeniedHandler(securityProblemSupport);
     }
 
     @Override
