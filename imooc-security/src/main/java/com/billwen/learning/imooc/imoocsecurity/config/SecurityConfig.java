@@ -38,6 +38,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.httpBasic(Customizer.withDefaults());
 
+        http.formLogin()
+                .loginPage("/login");
+
+        // Fix for the h2 console error
+        http.headers()
+                .frameOptions().sameOrigin();
+
+/*        http.rememberMe()
+                .tokenValiditySeconds(30 * 24 * 3600)
+                .rememberMeCookieDomain("somethingToRemember");*/
+
         http.csrf()
                 .csrfTokenRepository(new CookieCsrfTokenRepository())
                 .ignoringAntMatchers("/api/**", "/authorize/**", "/h2-console/**");
@@ -54,7 +65,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .accessDeniedHandler(securityProblemSupport);*/
 
         http.authorizeRequests()
-                .mvcMatchers("/authorize/**").permitAll()
+                .mvcMatchers("/authorize/**", "/h2-console/**", "/login", "/error", "/public/**").permitAll()
                 .mvcMatchers("/admin/**").hasRole("ADMIN")
                 .mvcMatchers("/api/**").hasRole("USER")
                 .anyRequest().authenticated();
@@ -62,18 +73,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().mvcMatchers("/public/**", "/error", "/h2-console/**", "/login")
+        web.ignoring()
             .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.jdbcAuthentication()
-                .withDefaultSchema()
                 .dataSource(this.dataSource)
-                .withUser("user")
-                .password(passwordEncoder().encode("12345678"))
-                .authorities("ROLE_USER", "ROLE_ADMIN");
+                .passwordEncoder(passwordEncoder())
+                .usersByUsernameQuery("select username, password, enabled from mooc_users where username = ?")
+                .authoritiesByUsernameQuery("select username, authority from mooc_authorities where username = ?");
+        ;
     }
 
     @Bean

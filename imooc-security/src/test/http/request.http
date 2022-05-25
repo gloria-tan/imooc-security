@@ -58,3 +58,7 @@ GET http://{{host}}/api/principal
 ### Basic authenticated user
 GET http://{{host}}/api/principal
 Authorization: Basic user 12345678
+
+### Basic authenticated user
+GET http://{{host}}/api/principal
+Authorization: Basic old_user 12345678
