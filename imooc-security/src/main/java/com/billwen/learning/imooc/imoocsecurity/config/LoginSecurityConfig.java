@@ -10,12 +10,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 public class LoginSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-                .anyRequest().authenticated();
 
         http.formLogin()
-                .loginPage("/login")
-                .permitAll();
+                .loginPage("/login");
 
         http.rememberMe()
                 .tokenValiditySeconds(30 * 24 * 3600)

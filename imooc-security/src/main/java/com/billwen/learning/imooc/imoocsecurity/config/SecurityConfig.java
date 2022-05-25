@@ -20,6 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.zalando.problem.spring.web.advice.security.SecurityProblemSupport;
 
+import javax.sql.DataSource;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -30,21 +31,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final SecurityProblemSupport securityProblemSupport;
 
+    private final DataSource dataSource;
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-                .mvcMatchers("/authorize/**").permitAll()
-                .mvcMatchers("/admin/**").hasRole("ADMIN")
-                .mvcMatchers("/api/**").hasRole("USER")
-                .anyRequest().authenticated();
 
         http.httpBasic(Customizer.withDefaults());
 
         http.csrf()
                 .csrfTokenRepository(new CookieCsrfTokenRepository())
-                .ignoringAntMatchers("/api/**", "/authorize/**");
-
-
+                .ignoringAntMatchers("/api/**", "/authorize/**", "/h2-console/**");
 
         http.logout()
                 .logoutSuccessHandler(new RestLogoutSuccessHandler())
@@ -53,24 +49,31 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.addFilterBefore(restAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
-        http.exceptionHandling()
+/*        http.exceptionHandling()
                 .authenticationEntryPoint(securityProblemSupport)
-                .accessDeniedHandler(securityProblemSupport);
+                .accessDeniedHandler(securityProblemSupport);*/
+
+        http.authorizeRequests()
+                .mvcMatchers("/authorize/**").permitAll()
+                .mvcMatchers("/admin/**").hasRole("ADMIN")
+                .mvcMatchers("/api/**").hasRole("USER")
+                .anyRequest().authenticated();
     }
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().mvcMatchers("/public/**", "/error")
+        web.ignoring().mvcMatchers("/public/**", "/error", "/h2-console/**", "/login")
             .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
+        auth.jdbcAuthentication()
+                .withDefaultSchema()
+                .dataSource(this.dataSource)
                 .withUser("user")
                 .password(passwordEncoder().encode("12345678"))
                 .authorities("ROLE_USER", "ROLE_ADMIN");
-
     }
 
     @Bean

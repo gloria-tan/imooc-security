@@ -36,3 +36,4 @@ spring:
   messages:
     basename: message
     encoding: UTF-8
+
