@@ -2,11 +2,18 @@ package com.billwen.learning.imooc.imoocsecurity.rest;
 
 import lombok.Data;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
 public class UserResource {
+
+    @GetMapping("/principal")
+    public Authentication getPrincipal() {
+        return SecurityContextHolder.getContext().getAuthentication();
+    }
 
     @GetMapping("/greeting")
     public String greeting() {

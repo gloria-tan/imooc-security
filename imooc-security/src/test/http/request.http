@@ -51,3 +51,10 @@ Content-Type: application/json
   "email": "gang.wen@gmail"
 
 }
+
+### Ananomous user
+GET http://{{host}}/api/principal
+
+### Basic authenticated user
+GET http://{{host}}/api/principal
+Authorization: Basic user 12345678
