@@ -22,8 +22,4 @@ public class Role implements GrantedAuthority, Serializable {
     @Column(name = "role_name", unique = true, nullable = false, length = 50)
     private String authority;
 
-    @Override
-    public String getAuthority() {
-        return null;
-    }
 }

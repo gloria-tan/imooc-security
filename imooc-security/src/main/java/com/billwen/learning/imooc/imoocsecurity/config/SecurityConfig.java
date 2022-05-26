@@ -1,6 +1,9 @@
 package com.billwen.learning.imooc.imoocsecurity.config;
 
+import com.billwen.learning.imooc.imoocsecurity.repository.UserRepo;
 import com.billwen.learning.imooc.imoocsecurity.security.filter.RestAuthenticationFilter;
+import com.billwen.learning.imooc.imoocsecurity.security.userdetails.UserDetailsPasswordServiceImpl;
+import com.billwen.learning.imooc.imoocsecurity.security.userdetails.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -12,6 +15,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsPasswordService;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.MessageDigestPasswordEncoder;
@@ -31,12 +36,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final SecurityProblemSupport securityProblemSupport;
 
-    private final DataSource dataSource;
+    private final UserDetailsServiceImpl userDetailsService;
+
+    private final UserRepo userRepo;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        http.httpBasic(Customizer.withDefaults());
+        http.httpBasic();
 
         http.formLogin()
                 .loginPage("/login");
@@ -79,12 +86,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.jdbcAuthentication()
-                .dataSource(this.dataSource)
-                .passwordEncoder(passwordEncoder())
-                .usersByUsernameQuery("select username, password, enabled from mooc_users where username = ?")
-                .authoritiesByUsernameQuery("select username, authority from mooc_authorities where username = ?");
-        ;
+        auth.userDetailsService(userDetailsService)
+                .userDetailsPasswordManager(userDetailsPasswordService())
+                .passwordEncoder(passwordEncoder());
     }
 
     @Bean
@@ -106,4 +110,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         return filter;
     }
+
+    public UserDetailsPasswordService userDetailsPasswordService() {
+        return new UserDetailsPasswordServiceImpl(this.userRepo, passwordEncoder());
+    }
+
 }

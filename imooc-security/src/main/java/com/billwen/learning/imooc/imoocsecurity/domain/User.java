@@ -1,6 +1,7 @@
 package com.billwen.learning.imooc.imoocsecurity.domain;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.springframework.security.core.GrantedAuthority;
@@ -12,6 +13,10 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Set;
 
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@With
 @Data
 @Entity
 @Table(name = "mooc_users")
@@ -24,6 +29,7 @@ public class User implements UserDetails, Serializable {
     @Column(length = 50, unique = true, nullable = false)
     private String username;
 
+    @JsonIgnore
     @Column(length = 160, name = "password_hash", nullable = false)
     private String password;
 
