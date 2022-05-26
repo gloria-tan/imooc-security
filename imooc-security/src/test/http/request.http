@@ -1,0 +1,64 @@
+
+### GET Test
+GET http://{{host}}/api/greeting HTTP/1.1
+Authorization: Basic user {{password}}
+Accept: application/json
+
+### POST Test
+POST http://{{host}}/api/greeting?name=billwen
+Authorization: Basic user {{password}}
+
+### PUT Test
+PUT http://{{host}}/api/greeting/gang.wen
+Authorization: Basic user {{password}}
+
+### Json payload
+POST http://{{host}}/api/jsonpayload
+Authorization: Basic user {{password}}
+Content-Type: application/json
+
+{
+"name": "superman"
+}
+
+### customerized filter
+POST http://{{host}}/authorize/login
+Content-Type: application/json
+
+{
+  "username": "user",
+  "password": "12345678"
+}
+
+### customerized filter failed
+POST http://{{host}}/authorize/login
+Content-Type: application/json
+
+{
+  "username": "user",
+  "password": "1234567"
+}
+
+### register user
+POST http://{{host}}/authorize/register
+Content-Type: application/json
+
+{
+  "username": "zhangsan",
+  "password": "12345678",
+  "matchPassword": "12345678",
+  "name": "Zhangsan",
+  "email": "gang.wen@gmail"
+
+}
+
+### Ananomous user
+GET http://{{host}}/api/principal
+
+### Basic authenticated user
+GET http://{{host}}/api/principal
+Authorization: Basic user 12345678
+
+### Basic authenticated user
+GET http://{{host}}/api/principal
+Authorization: Basic old_user 12345678
