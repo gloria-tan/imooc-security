@@ -65,7 +65,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .accessDeniedHandler(securityProblemSupport);*/
 
         http.authorizeRequests()
-                .mvcMatchers("/authorize/**", "/h2-console/**", "/login", "/error", "/public/**").permitAll()
+                .antMatchers("/authorize/**", "/h2-console/**", "/login", "/error", "/public/**", "/h2-console").permitAll()
                 .mvcMatchers("/admin/**").hasRole("ADMIN")
                 .mvcMatchers("/api/**").hasRole("USER")
                 .anyRequest().authenticated();
@@ -73,7 +73,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring()
+        web.ignoring().mvcMatchers("/h2-console")
             .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
 
