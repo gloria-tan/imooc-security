@@ -1,6 +1,8 @@
 package com.billwen.learning.imooc.imoocsecurity.config;
 
 import com.billwen.learning.imooc.imoocsecurity.repository.UserRepo;
+import com.billwen.learning.imooc.imoocsecurity.security.auth.ldap.LdapMultiAuthenticationProvider;
+import com.billwen.learning.imooc.imoocsecurity.security.auth.ldap.LdapUserRepo;
 import com.billwen.learning.imooc.imoocsecurity.security.filter.RestAuthenticationFilter;
 import com.billwen.learning.imooc.imoocsecurity.security.userdetails.UserDetailsPasswordServiceImpl;
 import com.billwen.learning.imooc.imoocsecurity.security.userdetails.UserDetailsServiceImpl;
@@ -9,6 +11,7 @@ import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -39,6 +42,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserDetailsServiceImpl userDetailsService;
 
     private final UserRepo userRepo;
+
+    private final LdapUserRepo ldapUserRepo;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -86,9 +91,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService)
-                .userDetailsPasswordManager(userDetailsPasswordService())
-                .passwordEncoder(passwordEncoder());
+        auth.authenticationProvider(daoAuthenticationProvider());
+        auth.authenticationProvider(ldapMultiAuthenticationProvider());
     }
 
     @Bean
@@ -99,6 +103,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "SHA-1", new MessageDigestPasswordEncoder("SHA-1")
         );
         return new DelegatingPasswordEncoder(defaultEncode, encoders);
+    }
+
+    @Bean
+    public DaoAuthenticationProvider daoAuthenticationProvider() {
+        var daoAuthenticationProvider = new DaoAuthenticationProvider();
+        daoAuthenticationProvider.setUserDetailsService(userDetailsService);
+        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
+        daoAuthenticationProvider.setUserDetailsPasswordService(userDetailsPasswordService());
+        return daoAuthenticationProvider;
+    }
+
+    @Bean
+    public LdapMultiAuthenticationProvider ldapMultiAuthenticationProvider() {
+        var ldapMultiAuthenticationProvider = new LdapMultiAuthenticationProvider(ldapUserRepo);
+        return ldapMultiAuthenticationProvider;
     }
 
     private RestAuthenticationFilter restAuthenticationFilter() throws Exception {

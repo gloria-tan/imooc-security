@@ -34,6 +34,14 @@ spring:
     # By default, data.sql scripts are now run before hibernate is initialized
     defer-datasource-initialization: true
 
+  ldap:
+    base: dc=imooc,dc=com
+    embedded:
+      base-dn: dc=imooc,dc=com
+      ldif: classpath:test-ldap-server.ldif
+      port: 8389
+    urls: ldap://localhost:8389/
+
 logging:
   level:
     com.billwen: DEBUG
