@@ -37,3 +37,8 @@ spring:
     basename: message
     encoding: UTF-8
 
+
+mooc:
+  jwt:
+    access-token-expire-time: 300000
+    refresh-token-expire-time: 2592000000
