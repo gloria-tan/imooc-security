@@ -16,6 +16,10 @@ import java.util.stream.Collectors;
 @Data
 @Component
 public class JwtUtil {
+    public static final String JWT_HEADER = "Authorization";
+
+    public static final String JWT_PREFIX = "Bearer ";
+
     // 用于签名访问令牌的密钥
     private static final Key ACCESS_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS512);
 

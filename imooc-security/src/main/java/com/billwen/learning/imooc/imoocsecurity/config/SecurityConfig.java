@@ -4,6 +4,7 @@ import com.billwen.learning.imooc.imoocsecurity.repository.UserRepo;
 import com.billwen.learning.imooc.imoocsecurity.security.auth.ldap.LdapMultiAuthenticationProvider;
 import com.billwen.learning.imooc.imoocsecurity.security.auth.ldap.LdapUserRepo;
 import com.billwen.learning.imooc.imoocsecurity.security.filter.RestAuthenticationFilter;
+import com.billwen.learning.imooc.imoocsecurity.security.jwt.JwtFilter;
 import com.billwen.learning.imooc.imoocsecurity.security.userdetails.UserDetailsPasswordServiceImpl;
 import com.billwen.learning.imooc.imoocsecurity.security.userdetails.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +46,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final LdapUserRepo ldapUserRepo;
 
+    private final JwtFilter jwtFilter;
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
@@ -71,6 +74,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .deleteCookies();
 
         http.addFilterBefore(restAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
 /*        http.exceptionHandling()
                 .authenticationEntryPoint(securityProblemSupport)
