@@ -29,4 +29,7 @@ public class UserDto implements Serializable {
 
     @NotEmpty
     private String name;
+
+    @NotEmpty
+    private String mobile;
 }
