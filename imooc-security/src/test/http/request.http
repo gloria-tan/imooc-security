@@ -62,3 +62,26 @@ Authorization: Basic user 12345678
 ### Basic authenticated user
 GET http://{{host}}/api/principal
 Authorization: Basic old_user 12345678
+
+### Get Token
+POST http://{{host}}/authorize/token
+Content-Type: application/json
+
+{
+  "username": "user",
+  "password": "12345678"
+}
+
+> {%
+client.global.set("access_token", response.body.accessToken);
+client.global.set("refresh_token", response.body.refreshToken);
+%}
+
+### Use access token to access api
+GET http://{{host}}/api/principal HTTP/1.1
+Authorization: Bearer {{access_token}}
+
+### Refresh a token
+POST http://{{host}}/authorize/token/refresh?refreshToken={{refresh_token}}
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
