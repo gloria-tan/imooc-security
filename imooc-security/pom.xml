@@ -23,8 +23,20 @@
 		<otp.version>0.3.1</otp.version>
 		<redisson.version>3.17.0</redisson.version>
 		<embeeded.redis.version>0.7.3</embeeded.redis.version>
+		<aliyun.version>4.6.0</aliyun.version>
+		<leancloud.version>6.5.3</leancloud.version>
 	</properties>
 	<dependencies>
+		<dependency>
+			<groupId>com.aliyun</groupId>
+			<artifactId>aliyun-java-sdk-core</artifactId>
+			<version>${aliyun.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>cn.leancloud</groupId>
+			<artifactId>storage-core</artifactId>
+			<version>${leancloud.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.redisson</groupId>
 			<artifactId>redisson-spring-boot-starter</artifactId>
