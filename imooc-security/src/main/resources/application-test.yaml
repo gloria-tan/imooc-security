@@ -1,0 +1,32 @@
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    password: "123"
+    # 数据库连接 URL, 为了兼容MySQL, 添加 ;MODE=MySQL
+    # ;DATABASE_TO_LOWER=TRUE 是让表名转为小写
+    # ;CASE_INSENSITIVE_IDENTIFIERS=TRUE 不区分大小写
+    # ;DB_CLOSE_DELAY=-1 不自动关闭数据库连接
+    url: jdbc:h2:mem:test;MODE=MySQL;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE;DB_CLOSE_DELAY=-1
+    username: sa
+
+  h2:
+    console:
+      # 显示 H2嵌入式 UI管理界面
+      enabled: false
+
+  jpa:
+    database: h2
+    database-platform: org.hibernate.dialect.H2Dialect
+    generate-ddl: true
+    hibernate:
+      ddl-auto: create-drop
+    # By default, data.sql scripts are now run before hibernate is initialized
+    defer-datasource-initialization: true
+
+  ldap:
+    base: dc=imooc,dc=com
+    embedded:
+      base-dn: dc=imooc,dc=com
+      ldif: classpath:test-ldap-server.ldif
+      port: 8389
+    urls: ldap://localhost:8389/
