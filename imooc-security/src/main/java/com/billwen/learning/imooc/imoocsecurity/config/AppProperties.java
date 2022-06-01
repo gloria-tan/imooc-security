@@ -17,6 +17,8 @@ public class AppProperties {
 
     private SmsProvider smsProvider = new SmsProvider();
 
+    private EmailProvider emailProvider = new EmailProvider();
+
     @Data
     public static class Jwt {
         private Long accessTokenExpireTime = 60_000L;
@@ -43,5 +45,12 @@ public class AppProperties {
         private String name;
 
         private String apiUrl;
+    }
+
+    @Data
+    public static class EmailProvider {
+        private String name;
+
+        private String apiKey;
     }
 }

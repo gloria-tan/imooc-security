@@ -37,6 +37,17 @@ spring:
     basename: message
     encoding: UTF-8
 
+  mail:
+    host: ${SMTP_HOST}
+    password: ${SMTP_PASSWORD}
+    port: ${SMTP_PORT}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+    username: ${SMTP_USERNAME}
 
 mooc:
   jwt:
@@ -48,4 +59,8 @@ mooc:
 
   sms-provider:
     name: ali
-    apiUrl: www.aliyun.com
+    api-url: www.aliyun.com
+
+  email-provider:
+    name: smtp
+    api-key: ${EMAIL_API_KEY}

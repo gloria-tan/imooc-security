@@ -25,8 +25,18 @@
 		<embeeded.redis.version>0.7.3</embeeded.redis.version>
 		<aliyun.version>4.6.0</aliyun.version>
 		<leancloud.version>6.5.3</leancloud.version>
+		<sendgrid.version>4.9.1</sendgrid.version>
 	</properties>
 	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sendgrid</groupId>
+			<artifactId>sendgrid-java</artifactId>
+			<version>${sendgrid.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>com.aliyun</groupId>
 			<artifactId>aliyun-java-sdk-core</artifactId>
