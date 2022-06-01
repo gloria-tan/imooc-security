@@ -19,7 +19,9 @@ import org.springframework.stereotype.Service;
 public class AliSmsService implements SmsService{
 
     private final AppProperties appProperties;
+    /*
     private final IAcsClient client;
+    */
 
     @Override
     public void send(String mobile, String msg) {

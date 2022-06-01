@@ -1,5 +1,6 @@
 package com.billwen.learning.imooc.imoocsecurity.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,6 +13,7 @@ import java.time.Instant;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Slf4j
 @ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
 public class TotpUtilTest {
@@ -46,5 +48,11 @@ public class TotpUtilTest {
         String stringifiedKey = this.totpUtil.encodeKeyToString(key);
         Key decodeKey = this.totpUtil.decodeKeyFromString(stringifiedKey);
         assertEquals(key, decodeKey, "从字符串中获得的 Key 解码后应该和原来的 key 一致。");
+    }
+
+    @Test
+    public void generate_mfaKey() {
+        String key = this.totpUtil.encodeKeyToString();
+        log.debug("Key -- {}", key);
     }
 }

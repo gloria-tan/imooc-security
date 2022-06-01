@@ -53,15 +53,15 @@ public class User implements UserDetails, Serializable {
     private String mfaKey;
 
     @Builder.Default
-    @Column(name = "credentials_non_expired", nullable = false)
+    @Column(name = "credentials_non_expired", nullable = false,  columnDefinition = "boolean default true")
     private boolean credentialsNonExpired = true;
 
     @Builder.Default
-    @Column(name = "account_non_locked", nullable = false)
+    @Column(name = "account_non_locked", nullable = false, columnDefinition = "boolean default true")
     private boolean accountNonLocked = true;
 
     @Builder.Default
-    @Column(name = "account_non_expired", nullable = false)
+    @Column(name = "account_non_expired", nullable = false, columnDefinition = "boolean default true")
     private boolean accountNonExpired = true;
 
     @ManyToMany

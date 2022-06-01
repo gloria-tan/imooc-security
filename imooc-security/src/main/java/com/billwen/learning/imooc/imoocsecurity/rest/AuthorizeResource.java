@@ -6,6 +6,7 @@ import com.billwen.learning.imooc.imoocsecurity.domain.User;
 import com.billwen.learning.imooc.imoocsecurity.domain.dto.LoginDto;
 import com.billwen.learning.imooc.imoocsecurity.domain.dto.UserDto;
 import com.billwen.learning.imooc.imoocsecurity.exception.DuplicateProblem;
+import com.billwen.learning.imooc.imoocsecurity.service.UserCacheService;
 import com.billwen.learning.imooc.imoocsecurity.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,8 @@ public class AuthorizeResource {
     private final UserService userService;
 
     private final JwtUtil jwtUtil;
+
+    private final UserCacheService userCacheService;
 
     @PostMapping("/register")
     public void register(@Valid @RequestBody UserDto userDto) {
@@ -56,8 +59,8 @@ public class AuthorizeResource {
     }
 
     @PostMapping("/token")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginDto loginDto) throws AuthenticationException {
-        userService.findOptionalByUsernameAndPassword(loginDto.getUsername(), loginDto.getPassword())
+    public ResponseEntity<?> login(@Valid @RequestBody LoginDto loginDto) throws BadCredentialsException {
+        return userService.findOptionalByUsernameAndPassword(loginDto.getUsername(), loginDto.getPassword())
                 .map( user -> {
                     // 1. 升级密码编码
                     //2. 验证
@@ -66,7 +69,7 @@ public class AuthorizeResource {
                         return ResponseEntity.ok().body(userService.login(loginDto.getUsername(), loginDto.getPassword()));
                     } else {
                         // 使用了多因子验证
-                        var mfaId = userCacheService.cache(user);
+                        var mfaId = userCacheService.cacheUser(user);
 
                         // 给客户端相应
 
