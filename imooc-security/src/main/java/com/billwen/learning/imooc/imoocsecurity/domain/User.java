@@ -44,14 +44,25 @@ public class User implements UserDetails, Serializable {
 
     private boolean enabled;
 
-    @Column(name = "credentials_non_expired", nullable = false, columnDefinition = "boolean default true")
-    private boolean credentialsNonExpired;
+    @Builder.Default
+    @Column(name = "using_mfa", nullable = false)
+    private boolean usingMfa = true;
 
-    @Column(name = "account_non_locked", nullable = false, columnDefinition = "boolean default true")
-    private boolean accountNonLocked;
+    @JsonIgnore
+    @Column(name = "mfa_key")
+    private String mfaKey;
 
-    @Column(name = "account_non_expired", nullable = false, columnDefinition = "boolean default true")
-    private boolean accountNonExpired;
+    @Builder.Default
+    @Column(name = "credentials_non_expired", nullable = false)
+    private boolean credentialsNonExpired = true;
+
+    @Builder.Default
+    @Column(name = "account_non_locked", nullable = false)
+    private boolean accountNonLocked = true;
+
+    @Builder.Default
+    @Column(name = "account_non_expired", nullable = false)
+    private boolean accountNonExpired = true;
 
     @ManyToMany
     @JoinTable(name = "mooc_users_roles",

@@ -8,6 +8,9 @@ import com.billwen.learning.imooc.imoocsecurity.domain.dto.UserDto;
 import com.billwen.learning.imooc.imoocsecurity.exception.DuplicateProblem;
 import com.billwen.learning.imooc.imoocsecurity.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,8 +56,26 @@ public class AuthorizeResource {
     }
 
     @PostMapping("/token")
-    public Auth login(@Valid @RequestBody LoginDto loginDto) throws AuthenticationException {
-        return userService.login(loginDto.getUsername(), loginDto.getPassword());
+    public ResponseEntity<?> login(@Valid @RequestBody LoginDto loginDto) throws AuthenticationException {
+        userService.findOptionalByUsernameAndPassword(loginDto.getUsername(), loginDto.getPassword())
+                .map( user -> {
+                    // 1. 升级密码编码
+                    //2. 验证
+                    //3. 判断usingMfa，如果false，直接返回Token
+                    if (!user.isUsingMfa()) {
+                        return ResponseEntity.ok().body(userService.login(loginDto.getUsername(), loginDto.getPassword()));
+                    } else {
+                        // 使用了多因子验证
+                        var mfaId = userCacheService.cache(user);
+
+                        // 给客户端相应
+
+                        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                                .header("X-Authenticate", "mfa", "realm=" + mfaId)
+                                .build();
+                    }
+                })
+                .orElseThrow(() -> new BadCredentialsException("用户名或密码错误"));
     }
 
     @PostMapping("/token/refresh")

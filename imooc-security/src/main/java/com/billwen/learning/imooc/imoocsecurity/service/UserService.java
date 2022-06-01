@@ -6,6 +6,7 @@ import com.billwen.learning.imooc.imoocsecurity.domain.User;
 import com.billwen.learning.imooc.imoocsecurity.repository.RoleRepo;
 import com.billwen.learning.imooc.imoocsecurity.repository.UserRepo;
 import com.billwen.learning.imooc.imoocsecurity.util.JwtUtil;
+import com.billwen.learning.imooc.imoocsecurity.util.TotpUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
 
@@ -13,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.Set;
 
 @RequiredArgsConstructor
@@ -26,6 +28,8 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     private final JwtUtil jwtUtil;
+
+    private final TotpUtil totpUtil;
 
     public Auth login(String username, String password) throws BadCredentialsException {
         return userRepo.findOptionalByUsername(username)
@@ -54,9 +58,15 @@ public class UserService {
         return roleRepo.findOptionalByAuthority(Constants.ROLE_USER)
                 .map(role -> {
                     var userToSave = user.withAuthorities(Set.of(role))
+                                                .withMfaKey(totpUtil.encodeKeyToString())
                                                 .withPassword(passwordEncoder.encode(user.getPassword()));
                     return userRepo.save(userToSave);
                 })
                 .orElseThrow(() -> new IllegalArgumentException("无效的用户"));
+    }
+
+    public Optional<User> findOptionalByUsernameAndPassword(String username, String password) {
+        return userRepo.findOptionalByUsername(username)
+                .filter(user -> passwordEncoder.matches(password, user.getPassword()));
     }
 }
