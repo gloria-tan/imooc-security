@@ -4,11 +4,15 @@ import com.billwen.learning.imooc.imoocsecurity.domain.Auth;
 import com.billwen.learning.imooc.imoocsecurity.domain.Role;
 import com.billwen.learning.imooc.imoocsecurity.domain.User;
 import com.billwen.learning.imooc.imoocsecurity.domain.dto.LoginDto;
+import com.billwen.learning.imooc.imoocsecurity.domain.dto.SendTotpDto;
 import com.billwen.learning.imooc.imoocsecurity.domain.dto.UserDto;
+import com.billwen.learning.imooc.imoocsecurity.domain.dto.VerifyTotpDto;
 import com.billwen.learning.imooc.imoocsecurity.exception.DuplicateProblem;
 import com.billwen.learning.imooc.imoocsecurity.service.UserCacheService;
 import com.billwen.learning.imooc.imoocsecurity.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -19,6 +23,9 @@ import com.billwen.learning.imooc.imoocsecurity.service.UserService;
 import javax.validation.Valid;
 import java.nio.file.AccessDeniedException;
 
+import static com.billwen.learning.imooc.imoocsecurity.domain.MfaType.SMS;
+
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/authorize")
@@ -64,6 +71,10 @@ public class AuthorizeResource {
                 .map( user -> {
                     // 1. 升级密码编码
                     //2. 验证
+                    if (!user.isEnabled()) {
+                        throw new RuntimeException("用户未激活");
+                    }
+
                     //3. 判断usingMfa，如果false，直接返回Token
                     if (!user.isUsingMfa()) {
                         return ResponseEntity.ok().body(userService.login(loginDto.getUsername(), loginDto.getPassword()));
@@ -79,6 +90,30 @@ public class AuthorizeResource {
                     }
                 })
                 .orElseThrow(() -> new BadCredentialsException("用户名或密码错误"));
+    }
+
+    @PutMapping("/totp")
+    public void sendTotp(@Valid @RequestBody SendTotpDto sendTotpDto) {
+        userCacheService.retrieveUser(sendTotpDto.getMfaId())
+                .flatMap(user -> userService.createTotp(user.getMfaKey()).map(totp -> Pair.of(user, totp)))
+                .ifPresentOrElse( totp -> {
+                    if (sendTotpDto.getMfaType() == SMS) {
+                        // Send SMS
+                        log.debug("Sending SMS -- {}", totp);
+                    } else {
+                        //Send Email
+                        log.debug("Sending email -- {}", totp);
+                    }
+                }, () -> {
+                    throw new BadCredentialsException("Invalid Code");
+                });
+    }
+
+    @PostMapping("/totp")
+    public Auth verifyTotp(@Valid @RequestBody VerifyTotpDto verifyTotpDto) {
+        userCacheService.verifyTotp(verifyTotpDto.getMfaId(), verifyTotpDto.getCode())
+            .map(user -> userService.login(user.getUsername(), user.getPassword()))
+            .orElseThrow(BadCredentialsException::new);
     }
 
     @PostMapping("/token/refresh")

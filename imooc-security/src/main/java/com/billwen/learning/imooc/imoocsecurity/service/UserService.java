@@ -69,4 +69,8 @@ public class UserService {
         return userRepo.findOptionalByUsername(username)
                 .filter(user -> passwordEncoder.matches(password, user.getPassword()));
     }
+
+    public Optional<String> createTotp(String key) {
+        return totpUtil.createTotp(key);
+    }
 }

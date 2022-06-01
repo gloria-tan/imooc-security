@@ -73,6 +73,7 @@ Content-Type: application/json
 }
 
 > {%
+client.global.set("mfaId", response.headers.valueOf("X-Authenticate"));
 client.global.set("access_token", response.body.accessToken);
 client.global.set("refresh_token", response.body.refreshToken);
 %}
