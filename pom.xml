@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.6.8</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>com.billwen.learning.imooc</groupId>
+	<artifactId>imooc-security</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>imooc-security</name>
+	<description>Demo project for Spring Boot</description>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>uaa-ui</module>
+        <module>uaa</module>
+    </modules>
+
+	<properties>
+		<java.version>11</java.version>
+		<bootstrap.version>5.1.3</bootstrap.version>
+		<webjars.locator.version>0.50</webjars.locator.version>
+		<passay.version>1.6.1</passay.version>
+		<zalando.problem.version>0.27.0</zalando.problem.version>
+		<jjwt.version>0.11.5</jjwt.version>
+		<otp.version>0.3.1</otp.version>
+		<redisson.version>3.17.0</redisson.version>
+		<embeeded.redis.version>0.7.3</embeeded.redis.version>
+		<aliyun.version>4.6.0</aliyun.version>
+		<leancloud.version>6.5.3</leancloud.version>
+		<sendgrid.version>4.9.1</sendgrid.version>
+        <unboundid.version>6.0.5</unboundid.version>
+	</properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.sendgrid</groupId>
+                <artifactId>sendgrid-java</artifactId>
+                <version>${sendgrid.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.aliyun</groupId>
+                <artifactId>aliyun-java-sdk-core</artifactId>
+                <version>${aliyun.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.leancloud</groupId>
+                <artifactId>storage-core</artifactId>
+                <version>${leancloud.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.redisson</groupId>
+                <artifactId>redisson-spring-boot-starter</artifactId>
+                <version>${redisson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>it.ozimov</groupId>
+                <artifactId>embedded-redis</artifactId>
+                <version>${embeeded.redis.version}</version>
+            </dependency>
+            
+            <!-- TOTP toolkit -->
+            <dependency>
+                <groupId>com.eatthepath</groupId>
+                <artifactId>java-otp</artifactId>
+                <version>${otp.version}</version>
+            </dependency>
+
+            <!-- Web Sources -->
+            <dependency>
+                <groupId>org.webjars</groupId>
+                <artifactId>webjars-locator-core</artifactId>
+                <version>${webjars.locator.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.webjars</groupId>
+                <artifactId>bootstrap</artifactId>
+                <version>${bootstrap.version}</version>
+            </dependency>
+
+            <!-- JWT Toolkit -->
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-api</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-impl</artifactId>
+                <version>${jjwt.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-jackson</artifactId>
+                <version>${jjwt.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+
+            <!-- Password validation -->
+            <dependency>
+                <groupId>org.passay</groupId>
+                <artifactId>passay</artifactId>
+                <version>${passay.version}</version>
+            </dependency>
+
+            <!-- Exception handler -->
+            <dependency>
+                <groupId>org.zalando</groupId>
+                <artifactId>problem-spring-web</artifactId>
+                <version>${zalando.problem.version}</version>
+            </dependency>
+
+            <!-- LDAP support -->
+            <dependency>
+                <groupId>com.unboundid</groupId>
+                <artifactId>unboundid-ldapsdk</artifactId>
+                <version>${unboundid.version}</version>
+            </dependency>
+            <!-- LDAP support End -->
+        </dependencies>
+    </dependencyManagement>    
+	
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
