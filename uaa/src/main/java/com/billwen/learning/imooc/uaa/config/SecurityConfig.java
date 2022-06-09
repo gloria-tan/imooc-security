@@ -9,9 +9,12 @@ import com.billwen.learning.imooc.uaa.security.userdetails.UserDetailsPasswordSe
 import com.billwen.learning.imooc.uaa.security.userdetails.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
+import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -27,16 +30,21 @@ import org.springframework.security.crypto.password.MessageDigestPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.zalando.problem.spring.web.advice.security.SecurityProblemSupport;
 
 import javax.sql.DataSource;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 
 @RequiredArgsConstructor
 @EnableWebSecurity(debug = true)
 @Import(SecurityProblemSupport.class)
 @Order(99)
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig extends WebSecurityConfigurerAdapter implements EnvironmentAware {
 
     private final SecurityProblemSupport securityProblemSupport;
 
@@ -47,6 +55,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final LdapUserRepo ldapUserRepo;
 
     private final JwtFilter jwtFilter;
+
+    private Environment environment;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -67,6 +77,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf()
                 .csrfTokenRepository(new CookieCsrfTokenRepository())
                 .ignoringAntMatchers("/api/**", "/authorize/**", "/h2-console/**");
+
+        http.cors()
+                .configurationSource(configurationSource());
 
         http.logout()
                 .logoutSuccessHandler(new RestLogoutSuccessHandler())
@@ -138,4 +151,27 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new UserDetailsPasswordServiceImpl(this.userRepo, passwordEncoder());
     }
 
+    @Bean
+    CorsConfigurationSource configurationSource() {
+        CorsConfiguration conf = new CorsConfiguration();
+        if (environment.acceptsProfiles(Profiles.of("dev"))) {
+            // 开发环境下运行跨域访问主机
+            conf.addAllowedOrigin("http://localhost:4000");
+        } else {
+            conf.addAllowedOrigin("https://uaa.imooc.com");
+        }
+
+        conf.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        conf.setAllowedHeaders(Collections.singletonList("*"));
+        conf.addExposedHeader("X-Authenticate");
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", conf);
+
+        return source;
+    }
+
+    @Override
+    public void setEnvironment(Environment environment) {
+        this.environment = environment;
+    }
 }

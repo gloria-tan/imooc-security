@@ -10,12 +10,13 @@
 	<artifactId>uaa</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>uaa</name>
-	<description>Backend system for Spring Boot</description>
+	<description>慕课网 Spring Security 实战课 UAA Server</description>
 	<properties>
 		<java.version>11</java.version>
 
 	</properties>
 	<dependencies>
+		<!-- Email  -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-mail</artifactId>
@@ -24,6 +25,8 @@
 			<groupId>com.sendgrid</groupId>
 			<artifactId>sendgrid-java</artifactId>
 		</dependency>
+
+		<!-- SMS -->
 		<dependency>
 			<groupId>com.aliyun</groupId>
 			<artifactId>aliyun-java-sdk-core</artifactId>
@@ -32,6 +35,8 @@
 			<groupId>cn.leancloud</groupId>
 			<artifactId>storage-core</artifactId>
 		</dependency>
+
+		<!-- Redis cache -->
 		<dependency>
 			<groupId>org.redisson</groupId>
 			<artifactId>redisson-spring-boot-starter</artifactId>
@@ -169,6 +174,7 @@
 	</dependencies>
 
 	<build>
+		<defaultGoal>spring-boot:run</defaultGoal>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -181,6 +187,39 @@
 						</exclude>
 					</excludes>
 				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>${resource.maven.version}</version>
+				<executions>
+					<execution>
+						<id>copy frontend content</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>src/main/resources/public</outputDirectory>
+							<overwrite>true</overwrite>
+							<resources>
+								<resource>
+									<directory>${project.parent.basedir}/uaa-ui/build</directory>
+									<includes>
+										<include>static/</include>
+										<include>index.html</include>
+										<include>favicon.ico</include>
+										<include>logo192.png</include>
+										<include>logo512.png</include>
+										<include>manifest.json</include>
+										<include>robots.txt</include>
+									</includes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

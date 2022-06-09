@@ -34,6 +34,8 @@
 		<leancloud.version>6.5.3</leancloud.version>
 		<sendgrid.version>4.9.1</sendgrid.version>
         <unboundid.version>6.0.5</unboundid.version>
+        <frontend.maven.version>1.12.1</frontend.maven.version>
+        <resource.maven.version>3.2.0</resource.maven.version>
 	</properties>
 
     <dependencyManagement>
