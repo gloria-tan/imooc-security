@@ -6,7 +6,10 @@ import org.passay.spring.SpringMessageResolver;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -16,6 +19,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebMvcConfig implements WebMvcConfigurer {
 
     private final MessageSource messageSource;
+
+    private final Environment environment;
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -47,4 +52,30 @@ public class WebMvcConfig implements WebMvcConfigurer {
         bean.setValidationMessageSource(messageSource);
         return bean;
     }
+
+    /**
+     * 使用 Spring Mvc 配置 CORS
+     * 也可以在 Security Config 中进行配置
+     *
+     * @param registry Cors注册表
+     */
+    /*
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        if (environment.acceptsProfiles(Profiles.of("dev", "test"))) {
+            registry.addMapping("/**")
+                    .allowedHeaders("*")
+                    .exposedHeaders("X-Authenticate")
+                    .allowedMethods("POST", "GET", "PUT", "DELETE", "OPTIONS")
+                    .allowedOrigins("http://localhost:4001");
+        } else {
+            registry.addMapping("/**")
+                    .allowedHeaders("*")
+                    .exposedHeaders("X-Authenticate")
+                    .allowedMethods("POST", "GET", "PUT", "DELETE", "OPTIONS")
+                    .allowedOrigins("https://uaa.imooc.com");
+        }
+    }
+
+     */
 }
