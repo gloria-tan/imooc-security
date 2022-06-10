@@ -1,0 +1,57 @@
+spring:
+
+  # Data source
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    # 数据库连接 URL
+    url: jdbc:mysql://host:3306/security?useUnicode=true&characterEncoding=utf8&useSSL=false
+    username: user
+    password: password
+    hikari:
+      pool-name: Hikari
+      auto-commit: false
+      data-source-properties:
+        # 缓存 SQL 语句
+        cachePrepStmts: true
+        # 缓存大小
+        prepStmtCacheSize: 250
+        # 缓存 SQL 的长度限制
+        prepStmtCacheSqlLimit: 2048
+        # 服务器预编译
+        useServerPrepStmts: true
+
+  h2:
+    # 禁止h2 console
+    console:
+      enabled: false
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        connection:
+          provider_disables_autocommit: true
+        generate_statistics: false
+        id:
+          new_generator_mappings: true
+        jdbc:
+          batch_size: 25
+        order_inserts: true
+        order_updates: true
+        query:
+          fail_on_pagination_over_collection_fetch: true
+          in_clause_parameter_padding: true
+    show-sql: false
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+
+  devtools:
+    # 禁用devtools属性添加
+    add-properties: false
+    # 禁用热加载
+    livereload:
+      enabled: false
+    # 禁用自动重启
+    restart:
+      enabled: true
