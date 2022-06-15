@@ -54,4 +54,12 @@ public class SecuredRestAPIIntTests {
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
+
+    @WithMockUser(username = "zhangsan", roles = {"ADMIN"})
+    @Test
+    public void givenRoleManagerOrAdmin_thenAccessSuccess() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders.get("/api/users/manager/{message}", "world"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
 }

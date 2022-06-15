@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -46,6 +47,11 @@ public class UserResource {
     @GetMapping("/users/{username}")
     public String getCurrentUsername(@PathVariable String username) {
         return "hello, " + username;
+    }
+
+    @GetMapping("/users/manager/{message}")
+    public String getManager(@PathVariable String message) {
+        return "Hello, " + message;
     }
 
     @PreAuthorize("hasRole('ADMIN')")

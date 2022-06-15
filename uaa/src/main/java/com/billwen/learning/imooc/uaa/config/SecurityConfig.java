@@ -15,6 +15,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.Profiles;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -97,6 +99,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements Envi
                 .antMatchers("/authorize/**", "/h2-console/**", "/login", "/error", "/public/**", "/h2-console").permitAll()
                 .mvcMatchers("/api/users/{username}").access("hasRole('ADMIN') or @userService.isValidUser(authentication, #username)")
                 .mvcMatchers("/api/users/by-email/{email}").hasRole("USER")
+                .mvcMatchers("/api/users/manager/**").hasRole("MANAGER")
                 .mvcMatchers("/admin/**").hasRole("ADMIN")
                 .mvcMatchers("/api/**").hasRole("USER")
                 .anyRequest().authenticated();
@@ -175,5 +178,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements Envi
     @Override
     public void setEnvironment(Environment environment) {
         this.environment = environment;
+    }
+
+    @Bean
+    public RoleHierarchy roleHierarchy() {
+        RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
+        roleHierarchy.setHierarchy("ROLE_ADMIN > ROLE_MANAGER\nROLE_MANAGER > ROLE_USER");
+
+        return roleHierarchy;
     }
 }
