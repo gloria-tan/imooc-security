@@ -10,6 +10,7 @@ import com.billwen.learning.imooc.uaa.util.TotpUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -72,5 +73,9 @@ public class UserService {
 
     public Optional<String> createTotp(String key) {
         return totpUtil.createTotp(key);
+    }
+
+    public boolean isValidUser(Authentication authentication, String username) {
+        return authentication.getName().equals(username);
     }
 }

@@ -36,6 +36,11 @@ public class UserResource {
         return "Hello world " + payloadDto.name;
     }
 
+    @GetMapping("/users/{username}")
+    public String getCurrentUsername(@PathVariable String username) {
+        return "hello, " + username;
+    }
+
     @Data
     public static class JsonPayloadDto {
         private String name;
