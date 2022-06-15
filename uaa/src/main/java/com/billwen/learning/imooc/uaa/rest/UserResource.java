@@ -1,7 +1,11 @@
 package com.billwen.learning.imooc.uaa.rest;
 
+import com.billwen.learning.imooc.uaa.domain.User;
+import com.billwen.learning.imooc.uaa.service.UserService;
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -9,6 +13,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api")
 public class UserResource {
+
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/principal")
     public Authentication getPrincipal() {
@@ -39,6 +46,12 @@ public class UserResource {
     @GetMapping("/users/{username}")
     public String getCurrentUsername(@PathVariable String username) {
         return "hello, " + username;
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/users/by-email/{email}")
+    public User getUserByEmail(@PathVariable String email) {
+        return userService.findOptionalByEmail(email).orElseThrow();
     }
 
     @Data

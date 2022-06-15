@@ -96,6 +96,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements Envi
         http.authorizeRequests()
                 .antMatchers("/authorize/**", "/h2-console/**", "/login", "/error", "/public/**", "/h2-console").permitAll()
                 .mvcMatchers("/api/users/{username}").access("hasRole('ADMIN') or @userService.isValidUser(authentication, #username)")
+                .mvcMatchers("/api/users/by-email/{email}").hasRole("USER")
                 .mvcMatchers("/admin/**").hasRole("ADMIN")
                 .mvcMatchers("/api/**").hasRole("USER")
                 .anyRequest().authenticated();
