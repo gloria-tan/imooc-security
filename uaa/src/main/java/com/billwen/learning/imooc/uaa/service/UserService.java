@@ -1,5 +1,6 @@
 package com.billwen.learning.imooc.uaa.service;
 
+import com.billwen.learning.imooc.uaa.annotation.RoleAdminOrSelfWithUserParam;
 import com.billwen.learning.imooc.uaa.config.Constants;
 import com.billwen.learning.imooc.uaa.domain.Auth;
 import com.billwen.learning.imooc.uaa.domain.User;
@@ -8,6 +9,7 @@ import com.billwen.learning.imooc.uaa.repository.UserRepo;
 import com.billwen.learning.imooc.uaa.util.JwtUtil;
 import com.billwen.learning.imooc.uaa.util.TotpUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.BadCredentialsException;
 
 import org.springframework.security.core.Authentication;
@@ -81,5 +83,30 @@ public class UserService {
 
     public boolean isValidUser(Authentication authentication, String username) {
         return authentication.getName().equals(username);
+    }
+
+    /**
+     * 保存用户
+     * hasRole hasAuthority hasAnyRole('ADMIN', 'USER') hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')
+     * @PreAuthorize("authentication.name == #user.username or hasAnyAuthority('" + Constants.ROLE_ADMIN + "', ''" + Constants.AUTHORITY_USER_UPDATE + "')")
+     * @param user 用户
+     * @return 保存后的用户
+     */
+    @Transactional
+    @RoleAdminOrSelfWithUserParam
+    public User saveUser(User user) {
+        return userRepo.save(user);
+    }
+
+    /**
+     * MFA登录
+     *
+     * @param user
+     * @return
+     */
+    public Auth loginWithTotp(User user) {
+        User toSave = user.withMfaKey(totpUtil.encodeKeyToString());
+        User saved = saveUser(toSave);
+        return null;
     }
 }
