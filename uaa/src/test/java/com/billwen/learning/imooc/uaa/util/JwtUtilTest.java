@@ -26,10 +26,10 @@ public class JwtUtilTest {
     @Test
     public void givenUserDetails_thenCreateTokenSuccess() {
         String username = "user";
-        var authorities = Set.of(Role.builder().authority("ROLE_USER").build(),
-                Role.builder().authority("ROLE_ADMIN").build());
+        var roles = Set.of(Role.builder().roleName("ROLE_USER").displayName("普通用户").builtIn(true).build(),
+                Role.builder().roleName("ROLE_ADMIN").displayName("管理员账号").builtIn(true).build());
 
-        var user = User.builder().username(username).authorities(authorities).build();
+        var user = User.builder().username(username).roles(roles).build();
 
         var token = jwtUtil.createAccessToken(user);
 

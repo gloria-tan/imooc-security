@@ -56,9 +56,9 @@ public class UserService {
 
     @Transactional
     public User register(User user) {
-        return roleRepo.findOptionalByAuthority(Constants.ROLE_USER)
+        return roleRepo.findOptionalByRoleName(Constants.ROLE_USER)
                 .map(role -> {
-                    var userToSave = user.withAuthorities(Set.of(role))
+                    var userToSave = user.withRoles(Set.of(role))
                                                 .withMfaKey(totpUtil.encodeKeyToString())
                                                 .withPassword(passwordEncoder.encode(user.getPassword()));
                     return userRepo.save(userToSave);

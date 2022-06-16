@@ -5,13 +5,17 @@ import lombok.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -64,11 +68,24 @@ public class User implements UserDetails, Serializable {
     @Column(name = "account_non_expired", nullable = false, columnDefinition = "boolean default true")
     private boolean accountNonExpired = true;
 
+    @JsonIgnore
+    @Builder.Default
     @ManyToMany
-    @JoinTable(name = "mooc_users_roles",
+    @JoinTable(
+            name = "mooc_users_roles",
             joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")})
     @Fetch(FetchMode.JOIN)
-    private Set<Role> authorities;
+    private Set<Role> roles = new HashSet<>();
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return roles.stream()
+                .flatMap(role -> Stream.concat(
+                    Stream.of(new SimpleGrantedAuthority(role.getRoleName())),
+                    role.getPermissions().stream()
+                    )
+                ).collect(Collectors.toSet());
+
+    }
 }
