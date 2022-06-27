@@ -18,6 +18,7 @@
     <modules>
         <module>uaa-ui</module>
         <module>uaa</module>
+        <module>todos-service</module>
     </modules>
 
 	<properties>
